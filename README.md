@@ -1,2 +1,2 @@
 # dicepy
- Analyse dice rolls and compare them to expected results
+Analyse dice rolls and compare them to the expected results
