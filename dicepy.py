@@ -172,38 +172,49 @@ def output_data_state(**kwargs):
 
     # Expected values under 2 roll resampling
     print("\nExpected average and standard deviation under 2 roll resampling:")
-    resampled_data = resample([1]*roll_counter.sides)
-    print_table_of_stats(resampled_data)
+    resampled_data_expected = resample([1]*roll_counter.sides)
+    print_table_of_stats(resampled_data_expected)
     resample_expected_u = 1 + roll_counter.sides
     # u1 = (sum(count*(i + 1) for i, count in enumerate(resampled_data))/sum(resampled_data))
     print(f"Expected Average: {resample_expected_u:.4f}")
-    resample_expected_SD = ( sum(count*(i + 1 - resample_expected_u)**2 for i, count in enumerate(resampled_data))/sum(resampled_data) )**0.5
+    resample_expected_SD = ( sum(count*(i + 1 - resample_expected_u)**2 for i, count in enumerate(resampled_data_expected))/sum(resampled_data_expected) )**0.5
     print(f"Expected Standard Deviation: {resample_expected_SD:.4f}")
     ax2 = fig.add_subplot(223)
     ax2.title.set_text("Expected 2 Roll Resampling")
-    x = [i + 1 for i in range(len(resampled_data))]
-    y = [count for count in resampled_data]
+    x = [i + 1 for i in range(len(resampled_data_expected))]
+    y = [count for count in resampled_data_expected]
     ax2.bar(x, y)
 
     # Actual results under 2 roll resampling
     print("\nActual average and standard eeviation under 2 roll resampling:")
-    resampled_data = resample(roll_counter.counter)
-    print_table_of_stats(resampled_data)
-    resample_actual_u = (sum(count*(i + 1) for i, count in enumerate(resampled_data))/sum(resampled_data))
+    resampled_data_actual = resample(roll_counter.counter)
+    print_table_of_stats(resampled_data_actual)
+    resample_actual_u = (sum(count*(i + 1) for i, count in enumerate(resampled_data_actual))/sum(resampled_data_actual))
     print(f"Actual Average: {resample_actual_u:.4f}")
-    resample_actual_SD = ( sum(count*(i + 1 - resample_actual_u)**2 for i, count in enumerate(resampled_data))/sum(resampled_data) )**0.5
+    resample_actual_SD = ( sum(count*(i + 1 - resample_actual_u)**2 for i, count in enumerate(resampled_data_actual))/sum(resampled_data_actual) )**0.5
     print(f"Actual Standard Deviation: {resample_actual_SD:.4f}")
     ax3 = fig.add_subplot(224)
     ax3.title.set_text("Actual 2 Roll Resampling")
-    x = [i + 1 for i in range(len(resampled_data))]
-    y = [count for count in resampled_data]
+    x = [i + 1 for i in range(len(resampled_data_actual))]
+    y = [count for count in resampled_data_actual]
     ax3.bar(x, y)
+
+
+    # Difference between expected and actual
+    print("\nDifference between expected and actual:")
+    diff_data = [(resampled_data_actual[i]/sum(resampled_data_actual)) - (resampled_data_expected[i]/sum(resampled_data_expected)) for i in range(len(resampled_data_actual))]
+    print_table_of_stats(diff_data)
+    ax4 = fig.add_subplot(222)
+    ax4.title.set_text("Difference between Expected and Actual")
+    x = [i + 1 for i in range(len(diff_data))]
+    y = [count for count in diff_data]
+    ax4.plot(x, y)
 
     # Little bit extra info
     print("\nSummary:")
-    u_diff = resample_expected_u - resample_actual_u
+    u_diff = resample_actual_u - resample_expected_u
     print(f"Average difference: {u_diff:.4f}")
-    SD_diff = resample_expected_SD - resample_actual_SD
+    SD_diff = resample_actual_SD - resample_expected_SD
     print(f"Standard Deviation difference: {SD_diff:.4f}")
     plt.show()
     print("\n")
